@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "383453163596",
+    "firebase_url": "https://find-cc272.firebaseio.com",
+    "project_id": "find-cc272",
+    "storage_bucket": "find-cc272.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:383453163596:android:9a34d2a9a07f4ae22044e9",
+        "android_client_info": {
+          "package_name": "com.roommate.find"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "383453163596-ka57hicq38vf9ljul92kqse2phg836n0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBR0UKEVaC7IoSVDMUEBEx0QYqlAEtsG6o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "383453163596-ka57hicq38vf9ljul92kqse2phg836n0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
