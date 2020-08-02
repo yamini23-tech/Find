@@ -3,13 +3,10 @@ package com.roommate.find.activities;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,7 +31,6 @@ import com.roommate.find.R;
 import com.roommate.find.common.AppConstants;
 import com.roommate.find.models.AddPostDo;
 import com.roommate.find.models.FavouriteDo;
-import com.roommate.find.models.FilterDo;
 import com.roommate.find.models.PostImagesDo;
 import com.roommate.find.models.RatingDo;
 import com.roommate.find.utils.PreferenceUtils;
@@ -42,12 +38,10 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class PostsListActivity extends BaseActivity {
+public class MyPostsListActivity extends BaseActivity {
 
     private LinearLayout llPostsList;
     private RecyclerView rvPostsList;
-    private EditText etSearchRoom;
-    private ImageView ivFilter;
     private FrameLayout flSearch;
     private TextView tvNoPostsFound;
     private FloatingActionButton fabAddPost;
@@ -66,82 +60,37 @@ public class PostsListActivity extends BaseActivity {
         ivBack.setVisibility(View.GONE);
         llToolbar.setVisibility(View.VISIBLE);
         llFooter.setVisibility(View.VISIBLE);
-        tvTitle.setText("POSTS");
+        tvTitle.setText("MY POSTS");
         initialiseControls();
-        if(getIntent().hasExtra(AppConstants.User_Type)){
-            userType = getIntent().getExtras().getString(AppConstants.User_Type);
-        }
-        if(userType.equalsIgnoreCase(AppConstants.User)){
-            fabAddPost.setVisibility(View.VISIBLE);
-        }
-        else {
-            fabAddPost.setVisibility(View.GONE);
-        }
-        rvPostsList.setLayoutManager(new LinearLayoutManager(PostsListActivity.this, LinearLayoutManager.VERTICAL, false));
-        postListRecyclerAdapter = new PostListRecyclerAdapter(PostsListActivity.this, new ArrayList<AddPostDo>(), new ArrayList<FavouriteDo>(), new ArrayList<PostImagesDo>());
+        userType = AppConstants.LoggedIn_User_Type;
+        flSearch.setVisibility(View.GONE);
+        fabAddPost.setVisibility(View.GONE);
+        rvPostsList.setLayoutManager(new LinearLayoutManager(MyPostsListActivity.this, LinearLayoutManager.VERTICAL, false));
+        postListRecyclerAdapter = new PostListRecyclerAdapter(MyPostsListActivity.this, new ArrayList<AddPostDo>(), new ArrayList<FavouriteDo>(), new ArrayList<PostImagesDo>());
         rvPostsList.setAdapter(postListRecyclerAdapter);
         fabAddPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(!(context instanceof AddPostActivity)){
-                    Intent intent = new Intent(PostsListActivity.this, AddPostActivity.class);
+                    Intent intent = new Intent(MyPostsListActivity.this, AddPostActivity.class);
                     startActivityForResult(intent, 120);
                     overridePendingTransition(R.anim.enter, R.anim.exit);
                 }
             }
         });
-        ivFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(addPostDos != null && addPostDos.size() > 0){
-                    Intent intent = new Intent(PostsListActivity.this, PostFilterActivity.class);
-                    startActivityForResult(intent, 321);
-                    overridePendingTransition(R.anim.enter, R.anim.exit);
-                }
-            }
-        });
-        etSearchRoom.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if(addPostDos != null && addPostDos.size() > 0){
-                    searchRoom(editable.toString());
-                }
-            }
-        });
-        if(isNetworkConnectionAvailable(PostsListActivity.this)){
-            getData();
-        }
-        else {
-            showInternetDialog("Posts");
-        }
+        getData();
     }
 
     private void initialiseControls(){
         flSearch                = llPostsList.findViewById(R.id.flSearch);
-        etSearchRoom            = llPostsList.findViewById(R.id.etSearchRoom);
-        ivFilter                = llPostsList.findViewById(R.id.ivFilter);
         fabAddPost              = llPostsList.findViewById(R.id.fabAddPost);
         rvPostsList             = llPostsList.findViewById(R.id.rvPostsList);
         tvNoPostsFound          = llPostsList.findViewById(R.id.tvNoPostsFound);
     }
 
-    private void searchRoom(String search){
-
-    }
-
     @Override
     protected void onResume() {
-        AppConstants.selectedTab = 1;
+        AppConstants.selectedTab = 2;
         super.onResume();
     }
 
@@ -151,86 +100,11 @@ public class PostsListActivity extends BaseActivity {
         if (requestCode == 120 && resultCode == 120){
             getData();
         }
-        else if (requestCode == 321 && resultCode == 321){
-            FilterDo filterDo = (FilterDo) data.getSerializableExtra("filterDo");
-            applyFilters(filterDo);
-        }
     }
 
-    private void applyFilters(FilterDo filterDo){
-        ArrayList<AddPostDo> filteredPostDos = new ArrayList<>();
-        if (addPostDos != null && addPostDos.size() > 0){
-            for (int i=0; i<addPostDos.size(); i++){
-                AddPostDo addPostDo = addPostDos.get(i);
-                int rent = Integer.parseInt(addPostDo.rent);
-                if(filterDo.priceRange > 0 && filterDo.priceRange <= rent){
-                    if(!filteredPostDos.contains(addPostDo)) {
-                        filteredPostDos.add(addPostDo);
-                    }
-                }
-                if(filterDo.unitType.equalsIgnoreCase(addPostDo.unitType)){
-                    if(!filteredPostDos.contains(addPostDo)) {
-                        filteredPostDos.add(addPostDo);
-                    }
-                }
-                if(filterDo.bedRooms.equalsIgnoreCase(addPostDo.bedRooms)){
-                    if(!filteredPostDos.contains(addPostDo)) {
-                        filteredPostDos.add(addPostDo);
-                    }
-                }
-                if(filterDo.rating == addPostDo.postRating){
-                    if(!filteredPostDos.contains(addPostDo)) {
-                        filteredPostDos.add(addPostDo);
-                    }
-                }
-                if(filterDo.hydro.equalsIgnoreCase(addPostDo.hydro)){
-                    if(!filteredPostDos.contains(addPostDo)) {
-                        filteredPostDos.add(addPostDo);
-                    }
-                }
-                if(filterDo.heating.equalsIgnoreCase(addPostDo.heating)){
-                    if(!filteredPostDos.contains(addPostDo)) {
-                        filteredPostDos.add(addPostDo);
-                    }
-                }
-                if(filterDo.parking.equalsIgnoreCase(addPostDo.parking)){
-                    if(!filteredPostDos.contains(addPostDo)) {
-                        filteredPostDos.add(addPostDo);
-                    }
-                }
-                if(filterDo.pet.equalsIgnoreCase(addPostDo.pet)){
-                    if(!filteredPostDos.contains(addPostDo)) {
-                        filteredPostDos.add(addPostDo);
-                    }
-                }
-                if(filterDo.furniture.equalsIgnoreCase(addPostDo.furniture)){
-                    if(!filteredPostDos.contains(addPostDo)) {
-                        filteredPostDos.add(addPostDo);
-                    }
-                }
-                if(filterDo.wifi.equalsIgnoreCase(addPostDo.wifi)){
-                    if(!filteredPostDos.contains(addPostDo)) {
-                        filteredPostDos.add(addPostDo);
-                    }
-                }
-            }
-            if(filteredPostDos!=null && filteredPostDos.size() > 0){
-                getImagesForThisPost();
-                loadFavouritePosts(filteredPostDos);
-                flSearch.setVisibility(View.VISIBLE);
-                rvPostsList.setVisibility(View.VISIBLE);
-                tvNoPostsFound.setVisibility(View.GONE);
-                rvPostsList.setAdapter(postListRecyclerAdapter = new PostListRecyclerAdapter(PostsListActivity.this, addPostDos, favouriteDos, postImagesDos));
-            }
-            else {
-                flSearch.setVisibility(View.GONE);
-                rvPostsList.setVisibility(View.GONE);
-                tvNoPostsFound.setVisibility(View.VISIBLE);
-            }
-        }
-    }
     @Override
     public void getData() {
+        final String userId = preferenceUtils.getStringFromPreference(PreferenceUtils.UserId, "");
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference databaseReference = database.getReference(AppConstants.Table_Posts);
         showLoader();
@@ -242,19 +116,19 @@ public class PostsListActivity extends BaseActivity {
                 addPostDos = new ArrayList<>();
                 for (DataSnapshot postSnapshot: snapshot.getChildren()) {
                     AddPostDo addPostDo = postSnapshot.getValue(AddPostDo.class);
-                    addPostDos.add(addPostDo);
-                    Log.e("Get Data", addPostDo.toString());
+                    if(userId.equalsIgnoreCase(addPostDo.postBy)){
+                        addPostDos.add(addPostDo);
+                        Log.e("Get Data", addPostDo.toString());
+                    }
                 }
                 if(addPostDos!=null && addPostDos.size() > 0){
                     getImagesForThisPost();
                     loadFavouritePosts(addPostDos);
-                    flSearch.setVisibility(View.VISIBLE);
                     rvPostsList.setVisibility(View.VISIBLE);
                     tvNoPostsFound.setVisibility(View.GONE);
-                    rvPostsList.setAdapter(postListRecyclerAdapter = new PostListRecyclerAdapter(PostsListActivity.this, addPostDos, favouriteDos, postImagesDos));
+                    rvPostsList.setAdapter(postListRecyclerAdapter = new PostListRecyclerAdapter(MyPostsListActivity.this, addPostDos, favouriteDos, postImagesDos));
                 }
                 else {
-                    flSearch.setVisibility(View.GONE);
                     rvPostsList.setVisibility(View.GONE);
                     tvNoPostsFound.setVisibility(View.VISIBLE);
                 }
@@ -325,19 +199,6 @@ public class PostsListActivity extends BaseActivity {
                 });
     }
 
-    @Override
-    public void onBackPressed() {
-        showAppCompatAlert("", "Do you want ot exit from app?", "Exit", "Cancel", "Exit", true);
-    }
-
-    @Override
-    public void onButtonYesClick(String from) {
-        super.onButtonYesClick(from);
-        if (from.equalsIgnoreCase("Exit")){
-            finish();
-        }
-    }
-
     private class PostListRecyclerAdapter extends RecyclerView.Adapter<PostHolder>{
 
         private Context context;
@@ -392,7 +253,7 @@ public class PostsListActivity extends BaseActivity {
             getRatingForThisPost(addPostDo, holder.rbRating);
             if(userType.equalsIgnoreCase(AppConstants.User)){
                 holder.ivFav.setVisibility(View.VISIBLE);
-                final boolean isFav = isFavouritePost(addPostDo.postId, favouriteDos);
+                final boolean isFav = isFavouritePosts(addPostDo.postId, favouriteDos);
                 if(isFav){
                     holder.ivFav.setImageResource(R.drawable.favourite_icon);
                 }
@@ -402,7 +263,7 @@ public class PostsListActivity extends BaseActivity {
                 holder.ivFav.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        favouritePosts(addPostDo, isFav, holder.ivFav, getFavouritePostsId(addPostDo.postId, favouriteDos));
+                        favouritePost(addPostDo, isFav, holder.ivFav, getFavouritePostId(addPostDo.postId, favouriteDos));
                     }
                 });
             }
@@ -412,7 +273,7 @@ public class PostsListActivity extends BaseActivity {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(PostsListActivity.this, PostDetailsActivity.class);
+                    Intent intent = new Intent(MyPostsListActivity.this, PostDetailsActivity.class);
                     addPostDo.postRating = (int) holder.rbRating.getRating();
                     intent.putExtra("addPostDo", addPostDo);
                     startActivity(intent);
@@ -432,7 +293,7 @@ public class PostsListActivity extends BaseActivity {
             return "";
         }
 
-        private boolean isFavouritePost(String postId, ArrayList<FavouriteDo> favouriteDos){
+        private boolean isFavouritePosts(String postId, ArrayList<FavouriteDo> favouriteDos){
             if(favouriteDos !=null && favouriteDos.size() > 0){
                 for (int i=0; i<favouriteDos.size(); i++){
                     if(favouriteDos.get(i).postId.equalsIgnoreCase(postId)){
@@ -443,10 +304,10 @@ public class PostsListActivity extends BaseActivity {
             return false;
         }
 
-        private String getFavouritePostsId(String postsId, ArrayList<FavouriteDo> favouriteDos){
+        private String getFavouritePostId(String postId, ArrayList<FavouriteDo> favouriteDos){
             if(favouriteDos !=null && favouriteDos.size() > 0){
                 for (int i=0; i<favouriteDos.size(); i++){
-                    if(favouriteDos.get(i).postId.equalsIgnoreCase(postsId)){
+                    if(favouriteDos.get(i).postId.equalsIgnoreCase(postId)){
                         return favouriteDos.get(i).favouriteId;
                     }
                 }
@@ -454,7 +315,7 @@ public class PostsListActivity extends BaseActivity {
             return "";
         }
 
-        private void favouritePosts(AddPostDo addPostDo, boolean add, final ImageView ivFav, String favId){
+        private void favouritePost(AddPostDo addPostDo, boolean add, final ImageView ivFav, String favId){
             if(!add){
                 showLoader();
                 FirebaseDatabase database = FirebaseDatabase.getInstance();

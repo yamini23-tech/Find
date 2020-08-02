@@ -32,16 +32,18 @@ public class LoginActivity extends BaseActivity {
         addBodyView(llLogin);
         lockMenu();
         ivBack.setVisibility(View.GONE);
-        ivMenu.setVisibility(View.GONE);
         llToolbar.setVisibility(View.GONE);
         initialiseControls();
+        // for temporary
+        etEmail.setText("king@gmail.com");
+        etPassword.setText("123456");
 
         tvSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                overridePendingTransition(R.anim.enter, R.anim.exit);
 
             }
         });
@@ -50,7 +52,7 @@ public class LoginActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, GuestLoginActivity.class);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                overridePendingTransition(R.anim.enter, R.anim.exit);
             }
         });
         tvClickHere.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +60,7 @@ public class LoginActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                overridePendingTransition(R.anim.enter, R.anim.exit);
             }
         });
 
@@ -79,7 +81,12 @@ public class LoginActivity extends BaseActivity {
                     showErrorMessage("Please enter password minimum 6 characters");
                 }
                 else {
-                    doLogin();
+                    if(isNetworkConnectionAvailable(LoginActivity.this)){
+                        doLogin();
+                    }
+                    else {
+                        showInternetDialog("Login");
+                    }
                 }
             }
         });
@@ -110,11 +117,14 @@ public class LoginActivity extends BaseActivity {
                         preferenceUtils.saveString(PreferenceUtils.UserId, userId);
                         preferenceUtils.saveString(PreferenceUtils.UserName, hashMap.get("name").toString());
                         preferenceUtils.saveString(PreferenceUtils.EmailId, etEmail.getText().toString().trim());
+                        preferenceUtils.saveString(PreferenceUtils.PhoneNo, hashMap.get("phone").toString());
                         preferenceUtils.saveString(PreferenceUtils.Password, etPassword.getText().toString().trim());
                         Intent intent = new Intent(LoginActivity.this, PostsListActivity.class);
+                        intent.putExtra(AppConstants.User_Type, AppConstants.User);
+                        AppConstants.LoggedIn_User_Type = AppConstants.User;
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
-                        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
                         finish();
                     }
                     else {

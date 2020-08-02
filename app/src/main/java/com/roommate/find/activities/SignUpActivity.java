@@ -32,7 +32,7 @@ public class SignUpActivity extends BaseActivity {
 
     private FrameLayout llSignup;
     private LinearLayout llNameEmail, llCountryState, llPassword, llFinish;
-    private EditText etName, etEmail, etCountry, etState, etPassword, etRenterPassword;
+    private EditText etName, etEmail, etPhone, etCountry, etCity, etState, etPassword, etRenterPassword;
     private RadioGroup rgGender;
     private DatabaseReference mDatabase;
     private RadioButton rbFemale, rbMale;
@@ -46,7 +46,6 @@ public class SignUpActivity extends BaseActivity {
         addBodyView(llSignup);
         lockMenu();
         ivBack.setVisibility(View.GONE);
-        ivMenu.setVisibility(View.GONE);
         llToolbar.setVisibility(View.GONE);
         initialiseControls();
         FirebaseApp.initializeApp(this);
@@ -76,6 +75,12 @@ public class SignUpActivity extends BaseActivity {
                 }
                 else if(etEmail.getText().toString().equalsIgnoreCase("")){
                     showErrorMessage("Please enter email");
+                }
+                else if(etPhone.getText().toString().equalsIgnoreCase("")){
+                    showErrorMessage("Please enter phone number");
+                }
+                else if(etPhone.getText().toString().trim().length() !=10){
+                    showErrorMessage("Please enter valid phone number");
                 }
                 else if(!isValidEmail(etEmail.getText().toString().trim())){
                     showErrorMessage("Please enter email");
@@ -116,8 +121,11 @@ public class SignUpActivity extends BaseActivity {
                 if(etCountry.getText().toString().equalsIgnoreCase("")){
                     showErrorMessage("Please enter country");
                 }
+                else if(etCity.getText().toString().equalsIgnoreCase("")){
+                    showErrorMessage("Please enter city");
+                }
                 else if(etState.getText().toString().equalsIgnoreCase("")){
-                    showErrorMessage("Please enter state");
+                    showErrorMessage("Please enter province");
                 }
                 else if(gender.equalsIgnoreCase("")){
                     showErrorMessage("Please select gender");
@@ -148,8 +156,12 @@ public class SignUpActivity extends BaseActivity {
                     showErrorMessage("Please enter password and Re-enter password are same");
                 }
                 else {
-                    doRegistration();
-//                    postUserSignupData();
+                    if(isNetworkConnectionAvailable(SignUpActivity.this)){
+                        doRegistration();
+                    }
+                    else {
+                        showInternetDialog("Signup");
+                    }
                 }
             }
         });
@@ -157,10 +169,13 @@ public class SignUpActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SignUpActivity.this, PostsListActivity.class);
+                AppConstants.LoggedIn_User_Type = AppConstants.User;
+                intent.putExtra(AppConstants.User_Type, AppConstants.User);
                 intent.putExtra("Email", etEmail.getText().toString().trim());
+                intent.putExtra("Phone", etPhone.getText().toString().trim());
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                overridePendingTransition(R.anim.enter, R.anim.exit);
                 finish();
             }
         });
@@ -178,8 +193,10 @@ public class SignUpActivity extends BaseActivity {
 
         etName                              = llSignup.findViewById(R.id.etName);
         etEmail                             = llSignup.findViewById(R.id.etEmail);
+        etPhone                             = llSignup.findViewById(R.id.etPhone);
         etCountry                           = llSignup.findViewById(R.id.etCountry);
         etState                             = llSignup.findViewById(R.id.etState);
+        etCity                              = llSignup.findViewById(R.id.etCity);
         etPassword                          = llSignup.findViewById(R.id.etPassword);
         etRenterPassword                    = llSignup.findViewById(R.id.etRenterPassword);
 
@@ -200,8 +217,8 @@ public class SignUpActivity extends BaseActivity {
 
     private void postUserSignupData(){
         final String userId = etEmail.getText().toString().trim().replace("@", "").replace(".", "");
-        final UserDo userDo = new UserDo(userId, etName.getText().toString().trim(), etEmail.getText().toString().trim(), etCountry.getText().toString().trim(),
-                                   etState.getText().toString().trim(), gender, etPassword.getText().toString().trim());
+        final UserDo userDo = new UserDo(userId, etName.getText().toString().trim(), etEmail.getText().toString().trim(), etPhone.getText().toString().trim(),
+                etCountry.getText().toString().trim(), etState.getText().toString().trim(), etCity.getText().toString().trim(), gender, etPassword.getText().toString().trim(), "");
 
         // My top posts by number of stars
         Query myTopPostsQuery = mDatabase.child(AppConstants.Table_Users).orderByChild(userId);
@@ -286,8 +303,8 @@ public class SignUpActivity extends BaseActivity {
     }
 
     private void insertIntoDB(String userId, DatabaseReference databaseReference){
-        final UserDo userDo = new UserDo(userId, etName.getText().toString().trim(), etEmail.getText().toString().trim(), etCountry.getText().toString().trim(),
-                etState.getText().toString().trim(), gender, etPassword.getText().toString().trim());
+        final UserDo userDo = new UserDo(userId, etName.getText().toString().trim(), etEmail.getText().toString().trim(), etPhone.getText().toString().trim(),
+                etCountry.getText().toString().trim(), etState.getText().toString().trim(), etCity.getText().toString().trim(), gender, etPassword.getText().toString().trim(), "");
 
         databaseReference.child(userId).setValue(userDo).
                 addOnCompleteListener(new OnCompleteListener<Void>() {

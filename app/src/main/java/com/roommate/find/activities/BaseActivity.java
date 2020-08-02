@@ -4,9 +4,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -24,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.roommate.find.R;
@@ -41,11 +45,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     private Dialog dialog;
     private AlertDialog.Builder alertDialog;
     public FrameLayout llToolbar;
-    public LinearLayout llDrawerLayoutPrent, llDrawerLayout, llBody;
+    public LinearLayout llDrawerLayoutPrent, llDrawerLayout, llBody, llFooter;
     private DrawerLayout dlCareer;
-    public ImageView ivBack, ivMenu;
+    public ImageView ivBack, ivMenu, ivHome, ivMyPosts, ivProfile, ivSettings;
     public TextView tvTitle, tvSignup;
-    private TextView tvMyProfile, tvEnrolledCourses, tvFavourites, tvLogout;
+    private TextView tvFavourites, tvEvents, tvMeetings, tvSupport, tvLogout, tvVersion;
     public static BaseActivity mInstance;
 
     @Override
@@ -64,6 +68,9 @@ public abstract class BaseActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
         lockMenu();
+        llFooter.setVisibility(View.GONE);
+        ivMenu.setVisibility(View.INVISIBLE);
+        ivBack.setVisibility(View.INVISIBLE);
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,12 +95,155 @@ public abstract class BaseActivity extends AppCompatActivity {
                 menuOperates();
             }
         });
+
+        ivHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!(context instanceof PostsListActivity)){
+                    Intent intent = new Intent(BaseActivity.this, PostsListActivity.class);
+                    intent.putExtra(AppConstants.User_Type, AppConstants.User);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
+                }
+            }
+        });
+        ivMyPosts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(AppConstants.LoggedIn_User_Type.equalsIgnoreCase(AppConstants.User)){
+                    if(!(context instanceof MyPostsListActivity)){
+                        Intent intent = new Intent(BaseActivity.this, MyPostsListActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                    }
+                }
+                else {
+                    showAppCompatAlert("Alert!", "You have logged-in as a guest, Please signup to access this feature", "SIGN UP", "CANCEL", "AskingToLogin", true);
+                }
+            }
+        });
+        ivProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(AppConstants.LoggedIn_User_Type.equalsIgnoreCase(AppConstants.User)){
+                    if(!(context instanceof ProfileActivity)){
+                        Intent intent = new Intent(BaseActivity.this, ProfileActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                    }
+                }
+                else {
+                    showAppCompatAlert("Alert!", "You have logged-in as a guest, Please signup to access this feature", "SIGN UP", "CANCEL", "AskingToLogin", true);
+                }
+            }
+        });
+        ivSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                menuOperates();
+            }
+        });
+
+        tvFavourites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                menuOperates();
+                if(AppConstants.LoggedIn_User_Type.equalsIgnoreCase(AppConstants.User)){
+                    Intent intent = new Intent(context, MyFavouritePostsListActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
+                }
+                else {
+                    showAppCompatAlert("Alert!", "You have logged-in as a guest, Please signup to access this feature", "SIGN UP", "CANCEL", "AskingToLogin", true);
+                }
+            }
+        });
+        tvEvents.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                menuOperates();
+                if(AppConstants.LoggedIn_User_Type.equalsIgnoreCase(AppConstants.User)) {
+                    if (!(context instanceof EventsListActivity)) {
+                        Intent intent = new Intent(context, EventsListActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                    }
+                }
+                else {
+                    showAppCompatAlert("Alert!", "You have logged-in as a guest, Please signup to access this feature", "SIGN UP", "CANCEL", "AskingToLogin", true);
+                }
+            }
+        });
+        tvMeetings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                menuOperates();
+                if(!(context instanceof MeetingsListActivity)){
+                    Intent intent = new Intent(context, MeetingsListActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
+                }
+            }
+        });
+        tvSupport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                menuOperates();
+                if(!(context instanceof SupportActivity)){
+                    Intent intent = new Intent(context, SupportActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
+                }
+            }
+        });
+        tvLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                menuOperates();
+                if(AppConstants.LoggedIn_User_Type.equalsIgnoreCase(AppConstants.User)) {
+                    Intent intent = new Intent(context, LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
+                }
+                else {
+                    showAppCompatAlert("Alert!", "You have logged-in as a guest, Please signup to access this feature", "SIGN UP", "CANCEL", "AskingToLogin", true);
+                }
+            }
+        });
         initialise();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        switch (AppConstants.selectedTab){
+            case 1:
+                ivHome.setAlpha(1f);
+                ivMyPosts.setAlpha(0.4f);
+                ivProfile.setAlpha(0.4f);
+                ivSettings.setAlpha(0.4f);
+                break;
+            case 2:
+                ivHome.setAlpha(0.4f);
+                ivMyPosts.setAlpha(1f);
+                ivProfile.setAlpha(0.4f);
+                ivSettings.setAlpha(0.4f);
+                break;
+            case 3:
+                ivHome.setAlpha(0.4f);
+                ivMyPosts.setAlpha(0.4f);
+                ivProfile.setAlpha(1f);
+                ivSettings.setAlpha(0.4f);
+                break;
+            case 4:
+                ivHome.setAlpha(0.4f);
+                ivMyPosts.setAlpha(0.4f);
+                ivProfile.setAlpha(0.4f);
+                ivSettings.setAlpha(1f);
+                break;
+        }
     }
 
     protected void lockMenu() {
@@ -105,20 +255,29 @@ public abstract class BaseActivity extends AppCompatActivity {
         llDrawerLayout              = findViewById(R.id.llDrawerLayout);
         llDrawerLayoutPrent         = findViewById(R.id.llDrawerLayoutPrent);
         llBody                      = findViewById(R.id.llBody);
+        llFooter                    = findViewById(R.id.llFooter);
         llToolbar                   = findViewById(R.id.llToolbar);
         ivBack                      = findViewById(R.id.ivBack);
         ivMenu                      = findViewById(R.id.ivMenu);
         tvSignup                    = findViewById(R.id.tvSignup);
         tvTitle                     = findViewById(R.id.tvTitle);
-        tvMyProfile                 = findViewById(R.id.tvMyProfile);
-        tvEnrolledCourses           = findViewById(R.id.tvEnrolledCourses);
         tvFavourites                = findViewById(R.id.tvFavourites);
+        tvEvents                    = findViewById(R.id.tvEvents);
+        tvMeetings                  = findViewById(R.id.tvMeetings);
+        tvSupport                   = findViewById(R.id.tvSupport);
         tvLogout                    = findViewById(R.id.tvLogout);
+        tvVersion                   = findViewById(R.id.tvVersion);
+
+        ivHome                      = findViewById(R.id.ivHome);
+        ivMyPosts                   = findViewById(R.id.ivMyPosts);
+        ivProfile = findViewById(R.id.ivProdile);
+        ivSettings                  = findViewById(R.id.ivSettings);
 
     }
 
     protected void addBodyView(View body) {
         llBody.addView(body, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        applyFont(body);
     }
 
     public void menuOperates() {
@@ -169,7 +328,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void onButtonYesClick(String from) {
-
+        if (from.equalsIgnoreCase("AskingToLogin")){
+            Intent intent = new Intent(context, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.enter, R.anim.exit);
+        }
     }
 
     public void hideKeyBoard(View view) {
@@ -284,13 +448,25 @@ public abstract class BaseActivity extends AppCompatActivity {
         return isNetworkConnectionAvailable;
     }
 
-    public void applyFont(final View root, String fontName) {
+    public boolean hasPermissions(Context context, String... permissions) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public void applyFont(final View root) {
+        String fontName = AppConstants.GILL_SANS_TYPE_FACE;
         try {
             fontName = fontStyleName(fontName);
             if (root instanceof ViewGroup) {
                 ViewGroup viewGroup = (ViewGroup) root;
                 for (int i = 0; i < viewGroup.getChildCount(); i++)
-                    applyFont(viewGroup.getChildAt(i), fontName);
+                    applyFont(viewGroup.getChildAt(i));
             }
             else if (root instanceof TextView){
                 ((TextView) root).setTypeface(Typeface.createFromAsset(getAssets(), fontName));
@@ -307,7 +483,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             if (root instanceof ViewGroup) {
                 ViewGroup viewGroup = (ViewGroup) root;
                 for (int i = 0; i < viewGroup.getChildCount(); i++)
-                    applyFont(viewGroup.getChildAt(i), fontName);
+                    applyFont(viewGroup.getChildAt(i));
             }
             else if (root instanceof TextView){
                 ((TextView) root).setTypeface(Typeface.createFromAsset(getAssets(), fontName));

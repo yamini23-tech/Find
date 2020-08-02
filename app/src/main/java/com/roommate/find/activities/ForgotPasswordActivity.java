@@ -6,13 +6,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,7 +34,6 @@ public class ForgotPasswordActivity extends BaseActivity {
         addBodyView(llGuestLogin);
         lockMenu();
         ivBack.setVisibility(View.GONE);
-        ivMenu.setVisibility(View.GONE);
         llToolbar.setVisibility(View.GONE);
 
         tvLogin                 = llGuestLogin.findViewById(R.id.tvLogin);
@@ -70,7 +66,12 @@ public class ForgotPasswordActivity extends BaseActivity {
                     showErrorMessage("Please password and re-enter password are same");
                 }
                 else {
-                    setNewPassword();
+                    if(isNetworkConnectionAvailable(ForgotPasswordActivity.this)){
+                        setNewPassword();
+                    }
+                    else {
+                        showInternetDialog("ForgotPassword");
+                    }
                 }
             }
         });
@@ -79,8 +80,8 @@ public class ForgotPasswordActivity extends BaseActivity {
     private void setNewPassword(){
         final String userId = etEmail.getText().toString().trim().replace("@", "").replace(".", "");
         showLoader();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        Query myTopPostsQuery = mDatabase.child(AppConstants.Table_Users).orderByChild(userId);
+        mDatabase = FirebaseDatabase.getInstance().getReference(AppConstants.Table_Users);
+        Query myTopPostsQuery = mDatabase.orderByChild(userId);
         myTopPostsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -89,10 +90,20 @@ public class ForgotPasswordActivity extends BaseActivity {
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         UserDo userDo1 = child.getValue(UserDo.class);
                         Log.d("SignupActivity", "message sender name:" + userDo1.toString());
-                        userDo1.password = etPassword.getText().toString().trim();
                         if(userDo1.userId.equalsIgnoreCase(userId)){
                             isExist = true;
-                            setNewPassword(userDo1, mDatabase);
+                            UserDo userDo2 = new UserDo();
+                            userDo2.userId = userDo1.userId;
+                            userDo2.name = userDo1.name;
+                            userDo2.email = userDo1.email;
+                            userDo2.phone = userDo1.phone;
+                            userDo2.country = userDo1.country;
+                            userDo2.state = userDo1.state;
+                            userDo2.city = userDo1.city;
+                            userDo2.gender = userDo1.gender;
+                            userDo2.password = etPassword.getText().toString().trim();
+                            userDo2.profilePicUrl = userDo1.profilePicUrl;
+                            setNewPassword(userDo2, mDatabase);
                             break;
                         }
                         // [END_EXCLUDE]
@@ -132,9 +143,11 @@ public class ForgotPasswordActivity extends BaseActivity {
         super.onButtonYesClick(from);
         if(from.equalsIgnoreCase("ForgotPassword")){
             Intent intent = new Intent(ForgotPasswordActivity.this, PostsListActivity.class);
+            intent.putExtra(AppConstants.User_Type, AppConstants.User);
+            AppConstants.LoggedIn_User_Type = AppConstants.User;
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+            overridePendingTransition(R.anim.enter, R.anim.exit);
             finish();
         }
     }
