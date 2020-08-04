@@ -8,37 +8,40 @@
         android:id="@+id/llToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
         android:background="@color/bg_screen"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/margin_60"
         android:padding="@dimen/margin_10">
 
         <ImageView
             android:id="@+id/ivBack"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:layout_gravity="start|center"
             android:src="@drawable/back_arrow"
             android:tint="@color/white"
-            android:layout_gravity="start|center"
             android:visibility="visible" />
 
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Title"
             android:layout_gravity="center"
-            android:textStyle="normal"
-            android:textColor="@color/white" />
+            android:text="Title"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvSignup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Signup"
-            android:textStyle="bold"
             android:layout_gravity="end|center"
-            android:visibility="gone"
-            android:textColor="@color/white" />
+            android:text="Signup"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
         <ImageView
             android:id="@+id/ivMenu"
             android:layout_width="24dp"
@@ -54,8 +57,9 @@
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/dlCareer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="right">
+        android:layout_height="0dp"
+        android:layout_gravity="right"
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -74,7 +78,7 @@
 
         <LinearLayout
             android:id="@+id/llDrawerLayout"
-            android:layout_width="match_parent"
+            android:layout_width="270dp"
             android:layout_height="match_parent"
             android:layout_gravity="right"
             android:background="@color/white"
@@ -85,4 +89,46 @@
         </LinearLayout>
     </androidx.drawerlayout.widget.DrawerLayout>
 
+    <LinearLayout
+        android:id="@+id/llFooter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/margin_10"
+        android:paddingTop="@dimen/margin_10"
+        android:paddingRight="@dimen/margin_10"
+        android:paddingBottom="@dimen/margin_10">
+
+
+        <ImageView
+            android:id="@+id/ivHome"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:src="@drawable/home_icon" />
+
+
+        <ImageView
+            android:id="@+id/ivMyPosts"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:src="@drawable/noted_icon" />
+
+        <ImageView
+            android:id="@+id/ivProdile"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:src="@drawable/profile_icon" />
+
+        <ImageView
+            android:id="@+id/ivSettings"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:src="@drawable/settings_icon" />
+
+    </LinearLayout>
 </LinearLayout>

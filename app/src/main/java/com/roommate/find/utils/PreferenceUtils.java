@@ -5,12 +5,13 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 
-public class PreferenceUtils 
+public class PreferenceUtils
 {
 //	public static final String UserId = "UserId";
 	public static final String UserId = "UserId";
 	public static final String UserName = "UserName";
 	public static final String EmailId = "EmailId";
+	public static final String PhoneNo = "PhoneNo";
 	public static final String Password = "Password";
 	private SharedPreferences preferences;
 	private SharedPreferences.Editor edit;

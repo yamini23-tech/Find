@@ -61,6 +61,23 @@
             android:inputType="textEmailAddress"
             android:padding="10dp" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Phone"
+            android:textColor="@android:color/black" />
+
+        <EditText
+            android:id="@+id/etPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:maxLength="10"
+            android:background="@drawable/edit_text_bg"
+            android:inputType="number"
+            android:padding="10dp" />
+
 
         <TextView
             android:layout_width="match_parent"
@@ -142,11 +159,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="STATE"
+            android:text="PROVINCE"
             android:textColor="@android:color/black" />
 
         <EditText
             android:id="@+id/etState"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/edit_text_bg"
+            android:inputType="text"
+            android:padding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="CITY"
+            android:textColor="@android:color/black" />
+
+        <EditText
+            android:id="@+id/etCity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"

@@ -5,16 +5,14 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,14 +20,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.roommate.find.R;
 import com.roommate.find.activities.BaseActivity;
-import com.roommate.find.activities.PostDetailsActivity;
 import com.roommate.find.models.MeetingDo;
 import com.roommate.find.utils.PreferenceUtils;
 
 import java.text.DecimalFormat;
 import java.util.Calendar;
-
-import androidx.annotation.NonNull;
 
 public class ScheduleMeetingDialog extends Dialog {
 

@@ -21,4 +21,27 @@
     <string name="take_photo">Take Photo</string>
 
     <string name="click_here"><u>Click Here</u></string>
+
+    <string-array name="unit_type">
+        <item>Select Unit Type</item>
+        <item>Independent</item>
+        <item>Apartment</item>
+        <item>Duplex</item>
+        <item>Triplex</item>
+    </string-array>
+    <string-array name="bed_rooms">
+        <item>Select Bed Rooms</item>
+        <item>1 BHK</item>
+        <item>2 BHK</item>
+        <item>3 BHK</item>
+        <item>4 BHK</item>
+    </string-array>
+    <string-array name="rating">
+        <item>Select Rating</item>
+        <item>1 </item>
+        <item>2 </item>
+        <item>3 </item>
+        <item>4 </item>
+        <item>5 </item>
+    </string-array>
 </resources>

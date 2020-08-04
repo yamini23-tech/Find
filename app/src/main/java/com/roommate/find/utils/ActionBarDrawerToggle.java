@@ -11,11 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import java.lang.reflect.Method;
-
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+
+import java.lang.reflect.Method;
 
 
 public class ActionBarDrawerToggle extends androidx.appcompat.app.ActionBarDrawerToggle {
