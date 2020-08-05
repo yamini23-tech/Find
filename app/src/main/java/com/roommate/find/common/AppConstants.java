@@ -1,3 +1,4 @@
+// app constants
 package com.roommate.find.common;
 
 import android.graphics.Typeface;
