@@ -1,4 +1,7 @@
-package com.roommate.find.models;
+
+\\add post
+        package com.roommate.find.models;
+
 
 public class AddPostDo extends BaseDo {
 
