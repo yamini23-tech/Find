@@ -35,8 +35,8 @@ public class LoginActivity extends BaseActivity {
         llToolbar.setVisibility(View.GONE);
         initialiseControls();
         // for temporary
-        etEmail.setText("king@gmail.com");
-        etPassword.setText("123456");
+        etEmail.setText("yaminireddybanda@gmail.com");
+        etPassword.setText("yamini");
 
         tvSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
