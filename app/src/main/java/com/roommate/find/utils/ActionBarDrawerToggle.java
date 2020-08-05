@@ -1,4 +1,3 @@
-\\actionbradrawer
 package com.roommate.find.utils;
 
 import android.app.ActionBar;
@@ -12,11 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import java.lang.reflect.Method;
+
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-
-import java.lang.reflect.Method;
 
 
 public class ActionBarDrawerToggle extends androidx.appcompat.app.ActionBarDrawerToggle {
@@ -38,7 +37,7 @@ public class ActionBarDrawerToggle extends androidx.appcompat.app.ActionBarDrawe
     public ActionBarDrawerToggle(Activity activity, DrawerLayout drawerLayout, Toolbar toolbar, int openDrawerContentDescRes, int closeDrawerContentDescRes, DrawerArrowDrawable mDrawerImage) {
 //    	ActionBarDrawerToggle(Activity activity, DrawerLayout drawerLayout, DrawerArrowDrawable drawerImage, int openDrawerContentDescRes, int closeDrawerContentDescRes) {
 //        super(activity, drawerLayout, R.drawable.ic_drawer, openDrawerContentDescRes, closeDrawerContentDescRes);
-    	 super(activity, drawerLayout, toolbar, openDrawerContentDescRes, closeDrawerContentDescRes);
+        super(activity, drawerLayout, toolbar, openDrawerContentDescRes, closeDrawerContentDescRes);
         mActivity = activity;
         mDrawerLayout = drawerLayout;
         mOpenDrawerContentDescRes = openDrawerContentDescRes;
@@ -131,7 +130,7 @@ public class ActionBarDrawerToggle extends androidx.appcompat.app.ActionBarDrawe
         if (mActivity != null) {
             try {
                 Method setHomeAsUpIndicator = ActionBar.class.getDeclaredMethod("setHomeAsUpIndicator",
-                    Drawable.class);
+                        Drawable.class);
                 setHomeAsUpIndicator.invoke(mActivity.getActionBar(), mDrawerImage);
                 return;
             } catch (Exception e) {
@@ -164,9 +163,9 @@ public class ActionBarDrawerToggle extends androidx.appcompat.app.ActionBarDrawe
         if (mActivity != null && mActivity.getActionBar() != null) {
             try {
                 Method setHomeActionContentDescription = ActionBar.class.getDeclaredMethod(
-                    "setHomeActionContentDescription", Integer.TYPE);
+                        "setHomeActionContentDescription", Integer.TYPE);
                 setHomeActionContentDescription.invoke(mActivity.getActionBar(),
-                    mDrawerLayout.isDrawerOpen(GravityCompat.START) ? mOpenDrawerContentDescRes : mCloseDrawerContentDescRes);
+                        mDrawerLayout.isDrawerOpen(GravityCompat.START) ? mOpenDrawerContentDescRes : mCloseDrawerContentDescRes);
                 if (Build.VERSION.SDK_INT <= 19) {
                     mActivity.getActionBar().setSubtitle(mActivity.getActionBar().getSubtitle());
                 }
