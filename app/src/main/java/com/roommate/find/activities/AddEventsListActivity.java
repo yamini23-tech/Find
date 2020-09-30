@@ -1,3 +1,5 @@
+// find application
+
 package com.roommate.find.activities;
 
 import android.view.View;
